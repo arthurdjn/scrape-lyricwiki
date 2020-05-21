@@ -4,17 +4,16 @@ However, they provides a better API and sperates Artist / Album / Song in a bett
 """
 
 from abc import ABC, abstractmethod
-import urllib.parse
 
 from .connect import connect
-import lyricwiki.scrape as F
+import lyricsfandom.scrape as F
 from .utils import name_to_wiki_id, name_to_wiki
 
 
 class LyricWikiMeta(ABC):
     """
-    The ``LyricWikiMeta`` is an abstract class that all object pointing to ``Lyric Wiki`` web site should inherits.
-    It provide basic set-up to connect and access to ``Lyric Wiki``website.
+    The ``LyricWikiMeta`` is an abstract class that all object pointing to `Lyric Wiki` web site should inherits.
+    It provide basic set-up to connect and access to `Lyric Wiki` website.
 
     """
 
@@ -54,8 +53,7 @@ class ArtistMeta(LyricWikiMeta):
     def __init__(self, artist_name):
         super().__init__()
         self.artist_name = name_to_wiki(artist_name)
-        self.artist_id = name_to_wiki_id(artist_name)
-        self.href = f'/wiki/{self.artist_id}' if self.artist_id else None
+        self.href = f'/wiki/{name_to_wiki_id(self.artist_name)}' if self.artist_name else None
         self._links = None
         self._items = []
 
@@ -71,7 +69,7 @@ class ArtistMeta(LyricWikiMeta):
         raise NotImplementedError
 
     def get_links(self):
-        """Retrieve merchandise links from a ``Lyric Wiki`` page.
+        """Retrieve merchandise links from a `Lyric Wiki` page.
         If the page (and links) exists, it will save it in a private attribute, to avoid loading again and again
         the same links if the method is called multiple times.
 
@@ -130,18 +128,18 @@ class AlbumMeta(ArtistMeta):
     def __init__(self, artist_name, album_name, album_year=None, album_type=None):
         super().__init__(artist_name)
         self.album_name = name_to_wiki(album_name) if album_name else ''
-        self.album_id = name_to_wiki_id(self.album_name)
+        # self.album_id = name_to_wiki_id(self.album_name)
         self.album_year = album_year
         self.album_type = album_type
         href = None
-        if self.artist_id and self.album_id and self.album_year:
-            href = f'/wiki/{self.artist_id}:{self.album_id}_({self.album_year})'
+        if self.artist_name and self.album_name and self.album_year:
+            href = f'/wiki/{name_to_wiki_id(self.artist_name)}:{name_to_wiki_id(self.album_name)}_({self.album_year})'
         self.href = href
         self._artist = None
 
     def get_artist(self):
         """Retrieve the artist class linked to the album (if it exists).
-        It is usually called when an album has been searched from an ``Artist``class.
+        It is usually called when an album has been searched from an ``Artist`` class.
         Then, using this function will point to the same ``Artist`` object.
 
         Returns:
@@ -217,13 +215,13 @@ class SongMeta(AlbumMeta):
 
     def __init__(self, artist_name, song_name, album_name=None, album_year=None, album_type=None):
         super().__init__(artist_name, album_name, album_year=album_year, album_type=album_type)
-        self._album = None
         self.song_name = name_to_wiki(song_name)
-        self.song_id = name_to_wiki_id(song_name)
+        # self.song_id = name_to_wiki_id(song_name)
         href = None
-        if self.artist_id and self.song_id:
-            href = f"/wiki/{self.artist_id}:{self.song_id}"
+        if name_to_wiki_id(self.artist_name) and self.song_name:
+            href = f"/wiki/{name_to_wiki_id(self.artist_name)}:{name_to_wiki_id(self.song_name)}"
         self.href = href
+        self._album = None
         self._lyrics = None
 
     def set_lyrics(self, value):

@@ -77,18 +77,16 @@ These are the most common functions, but others can be used to modify the data.
 import warnings
 import urllib.parse
 
-from lyricwiki.utils import *
-from lyricwiki import scrape
-from lyricwiki.meta import ArtistMeta
-import lyricwiki.music as wiki
+from lyricsfandom.utils import *
+from lyricsfandom import scrape
+from lyricsfandom.meta import ArtistMeta
+import lyricsfandom.music as wiki
 
 
 class Artist(ArtistMeta):
     """Defines an Artist / Band from ``https://lyrics.fandom.com/wiki/``.
 
     * :attr:`artist_name`: name of the artist.
-
-    * :attr:`artist_id`: id of the artist.
 
     * :attr:`base`: base page of Lyric Wiki.
 
@@ -146,13 +144,7 @@ class Artist(ArtistMeta):
 
         """
         # Return nothing if the connection is incorrect
-        soup = connect(url)
-        if not soup:
-            return None
-
-        artist_name = soup.find('h1', attrs={'class', 'page-header__title'}).text.replace('Lyrics', '').strip()
-        artist = Artist(artist_name)
-        return artist
+        pass
 
     def items(self, cover=True, other=True):
         """Connect to ``LyricWiki`` server and scrape albums / songs.
@@ -166,6 +158,7 @@ class Artist(ArtistMeta):
             yield Album
 
         """
+        self._items = []
         # Return nothing if the connection is incorrect
         soup = self.connect()
         if not soup:
@@ -181,6 +174,7 @@ class Artist(ArtistMeta):
             album = wiki.Album(self.artist_name,
                                album_name,
                                album_year=album_year)
+            album.register_artist(self)
             album_h2 = album_span.parent
 
             # Count the number of songs. Will be used to avoid returning empty albums.
@@ -203,7 +197,7 @@ class Artist(ArtistMeta):
             if num_songs > 0:
                 if song_a.parent.parent.parent.name == 'ol':
                     album.set_album_type()
-                self._items.append(album)
+                self.add_album(album)
                 yield album
 
     def add_album(self, album, force=None):
@@ -232,7 +226,7 @@ class Artist(ArtistMeta):
 
         """
         if isinstance(album, wiki.Album):
-            if name_to_wiki_id(album.artist_name) != self.artist_id:
+            if name_to_wiki_id(album.artist_name) != name_to_wiki_id(self.artist_name):
                 if force is None:
                     warn_msg = f'\nInvalid Name: Artist name from "{album.artist_name}" does not match ' \
                                f'parent artist {self.artist_name}. The album has been added, but you can change ' \
@@ -270,8 +264,6 @@ class Artist(ArtistMeta):
         """
         for album in self.albums(**kwargs):
             for song in album.songs():
-                song.register_artist(self)
-                song.register_album(album)
                 yield song
 
     def get_albums(self, cover=False, other=False):
@@ -304,8 +296,8 @@ class Artist(ArtistMeta):
 
         """
         songs = []
-        for album in self.albums():
-            songs.extend(album.get_songs())
+        for song in self.songs():
+            songs.append(song)
         return songs
 
     def search_album(self, album_name):
@@ -319,7 +311,7 @@ class Artist(ArtistMeta):
 
         """
         for album in self.albums():
-            if name_to_wiki_id(album_name) == album.album_id:
+            if name_to_wiki_id(album_name) == name_to_wiki_id(album.album_name):
                 return album
 
         # WARNING: no album found
@@ -340,7 +332,7 @@ class Artist(ArtistMeta):
         """
         for album in self.albums():
             for song in album:
-                if name_to_wiki_id(song_name) == song.song_id:
+                if name_to_wiki_id(song_name) == name_to_wiki_id(song.song_name):
                     return song
 
         # WARNING: no song found

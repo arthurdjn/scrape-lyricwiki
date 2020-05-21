@@ -1,13 +1,33 @@
 """
 Extract lyrics and songs from ``https://lyrics.fandom.com/`` website.
+
+Examples:
+
+    .. code-block:: python
+
+        # 1. Generate an album from scratch
+        album = Album('Bon Iver', 'For Emma, Forever Ago')
+        # Scrape songs.
+        songs = album.get_songs()
+        # Be careful as this album was created from scratch it is not linked to any ``Artist`` instance.
+        # However, there is still the artist's name saved.
+        album.get_artist()  # None
+        album.artist_name  # 'Bon Iver'
+
+        # 2. Use an album from an artist
+        artist = Artist('Bon Iver')
+        album = Album.from_artist(artist, 'For Emmma, Forever Ago')
+        album.get_artist()  # Artist: 'Bon Iver'
+        # Or search it from the artist class.
+        album = artist.search_album('For Emma, Forever Ago')
+
 """
 
 import warnings
-import urllib.parse
 
-from lyricwiki.utils import *
-from lyricwiki import scrape
-from lyricwiki.meta import AlbumMeta
+from lyricsfandom.utils import *
+from lyricsfandom import scrape
+from lyricsfandom.meta import AlbumMeta
 from .song import Song
 from .artist import Artist
 
@@ -45,15 +65,7 @@ class Album(AlbumMeta):
 
         """
         # Return nothing if the connection is incorrect
-        soup = connect(url)
-        if soup is None:
-            return None
-
-        header = scrape.get_header_from_url(soup=soup)
-        artist_name, album_name, album_year = split_header(header)
-        artist = Artist(artist_name)
-        album = artist.search_album(album_name)
-        return album
+        pass
 
     @classmethod
     def from_artist(cls, artist, album_name):
@@ -68,13 +80,12 @@ class Album(AlbumMeta):
 
         """
         for album in artist.albums():
-            if name_to_wiki_id(album_name) == album.album_id:
+            if name_to_wiki_id(album_name) == name_to_wiki_id(album.album_name):
                 return album
 
         warn_msg = f'\nNot Found: No albums named "{album_name}" found in "{artist.artist_name}" discography. ' \
                    f'`None` was returned.'
         warnings.warn(warn_msg, RuntimeWarning)
-
         return None
 
     def items(self):
@@ -88,8 +99,7 @@ class Album(AlbumMeta):
         album = Artist(self.artist_name).search_album(self.album_name)
         for song in album.songs():
             song.unregister()
-            song.register_album(self)
-            self._items.append(song)
+            self.add_song(song)
             yield song
 
     def add_song(self, song, force=None):
@@ -100,7 +110,7 @@ class Album(AlbumMeta):
         add it to the album.
 
         Args:
-            song (Album or string): song (or song name) to add to the current album.
+            song (Song or string): song (or song name) to add to the current album.
             force (bool): if ``True``, change the song's ``artist_name, album_name, album_year, album_type``
                 attribute to match its parent.
 
@@ -115,7 +125,7 @@ class Album(AlbumMeta):
         """
 
         if isinstance(song, Song):
-            if name_to_wiki_id(song.album_name) != self.album_id:
+            if name_to_wiki_id(song.album_name) != name_to_wiki_id(self.album_name):
                 if force is None:
                     warn_msg = f'\nInvalid Names: Album name from "{song.album_name}" does not match ' \
                                f'parent album {self.album_name}. The song has been added, but you can change ' \
@@ -124,22 +134,19 @@ class Album(AlbumMeta):
                     warnings.warn(warn_msg, RuntimeWarning)
                 elif force:
                     song.album_name = self.artist_name
-                    song.album_type = self._album_type
+                    song.album_type = self.album_type
                     song.album_year = self.album_year
 
-            song.register_artist(self.get_artist())
-            song.register_album(self)
-            self._items.append(song)
         elif isinstance(song, str):
-            new_song = Song(self.artist_name,
-                            song,
-                            album_name=self.album_name,
-                            album_type=self._album_type,
-                            album_year=self.album_year)
+            song = Song(self.artist_name,
+                        song,
+                        album_name=self.album_name,
+                        album_type=self.album_type,
+                        album_year=self.album_year)
 
-            song.register_artist(self.get_artist())
-            song.register_album(self)
-            self._items.append(new_song)
+        song.register_artist(self.get_artist())
+        song.register_album(self)
+        self._items.append(song)
 
     def songs(self):
         """Iterate through all songs within the current album.

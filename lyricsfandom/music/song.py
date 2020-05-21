@@ -3,11 +3,10 @@ Extract lyrics and songs from ``https://lyrics.fandom.com/`` website.
 """
 
 import warnings
-import urllib.parse
 
-from lyricwiki.utils import serialize_dict, serialize_list
-from lyricwiki import scrape
-from lyricwiki.meta import SongMeta
+from lyricsfandom.utils import *
+from lyricsfandom import scrape
+from lyricsfandom.meta import SongMeta
 from .artist import Artist
 
 
@@ -15,8 +14,6 @@ class Song(SongMeta):
     """Defines a Song from ``https://lyrics.fandom.com/``.
 
     * :attr:`song_name`: name of the song.
-
-    * :attr:`song_id`: id of the song.
 
     * :attr:`url`: url of the song.
 
@@ -51,7 +48,7 @@ class Song(SongMeta):
 
         """
         for song in artist.songs():
-            if name_to_wiki_id(song_name) == song.song_id:
+            if name_to_wiki_id(song_name) == name_to_wiki_id(song.song_name):
                 return song
 
         warn_msg = f'\nNot Found: No songs named "{song_name}" found in "{artist.artist_name}" playlist. ' \
@@ -72,7 +69,7 @@ class Song(SongMeta):
 
         """
         for song in album.songs():
-            if name_to_wiki_id(song_name) == song.song_id:
+            if name_to_wiki_id(song_name) == name_to_wiki_id(song.song_name):
                 return song
 
         warn_msg = f'\nNot Found: No songs named "{song_name}" found in "{album.album_name}" playlist. ' \

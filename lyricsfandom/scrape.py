@@ -10,12 +10,11 @@ on a wab page (usually the whole page, not just a ``<div>`` or other ``HTML`` el
 
 import bs4
 
-from pyscrape import connect
-from lyricwiki import *
+from .utils import *
 
 
 def generate_artist_url(artist_name):
-    """Generate a ``LyricWiki`` url of an artist page from its name.
+    """Generate a `Lyric Wiki` url of an artist page from its name.
 
     Args:
         artist_name (string): name of the Artist.
@@ -34,7 +33,7 @@ def generate_artist_url(artist_name):
 
 
 def generate_album_url(artist_name, album_name, album_year):
-    """Generate a ``LyricWiki`` url from of an album page from its artist and name / year.
+    """Generate a `Lyric Wiki` url from of an album page from its artist and name / year.
 
     Args:
         artist_name (string): name of the Artist.
@@ -59,12 +58,12 @@ def generate_album_url(artist_name, album_name, album_year):
 
 
 def get_external_links(soup):
-    """Retrieve the different links from a ``LyricWiki`` page.
+    """Retrieve the different links from a `Lyric Wiki` page.
     The links returned can be found in the `External Links` page section,
     and usually references to other platforms (like Last.fm, Amazon, iTunes etc.).
 
     Args:
-        soup (bs4.element.Tag): connection to the ``LyricWiki`` page.
+        soup (bs4.element.Tag): connection to the `Lyric Wiki` page.
 
     Returns:
         dict
@@ -223,7 +222,7 @@ def scrape_external_links(soup):
 
 
 def get_lyrics(soup):
-    """Get lyrics from a ``LyricWiki`` song page.
+    """Get lyrics from a `Lyric Wiki` song page.
 
     Returns:
         string

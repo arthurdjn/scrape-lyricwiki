@@ -2,23 +2,18 @@
 API and other classes to connect on Lyrics Wiki.
 """
 
-import warnings
-import bs4
-import urllib.request
-import time
-from abc import ABC, abstractmethod
-
-from pyscrape import set_verbose, set_user, set_sleep
+from .connect import set_verbose, set_user, set_sleep
 from .meta import LyricWikiMeta
-from lyricwiki import Artist, Album, Song
+from lyricsfandom import Artist, Album, Song
 
 
 class LyricWiki(LyricWikiMeta):
-    """Main API for ``Lyric Wiki`` scrapping.
+    """Main API for `Lyric Wiki` scrapping.
 
     It basically wraps ``Artist``, ``Album`` and ``Song`` classes.
 
     """
+
     def __init__(self, verbose=False, sleep=0, user=None):
         super().__init__()
         self.set_user(user)
@@ -53,7 +48,7 @@ class LyricWiki(LyricWikiMeta):
         set_sleep(sleep)
 
     def search_artist(self, artist_name, cover=False, other=False):
-        """Search an artist from ``Lyric Wiki`` server.
+        """Search an artist from `Lyric Wiki` server.
 
         Args:
             artist_name (string): name of the artist to get.
@@ -70,7 +65,7 @@ class LyricWiki(LyricWikiMeta):
         return artist
 
     def search_album(self, artist_name, album_name):
-        """Search an album from ``Lyric Wiki``server.
+        """Search an album from `Lyric Wiki` server.
 
         Args:
             artist_name (string): name of the artist who made the album.
@@ -84,16 +79,37 @@ class LyricWiki(LyricWikiMeta):
         return artist.search_album(album_name)
 
     def search_song(self, artist_name, song_name):
-        """Search a song from ``Lyric Wiki`` server.
+        """Search a song from `Lyric Wiki` server.
 
         Args:
             artist_name (string): name of the artist who made the song.
             song_name (string): name of the song.
 
         Returns:
+            Song
 
         """
         return Song(artist_name, song_name)
 
     def search_query(self, query):
-        pass
+        raise NotImplementedError
+
+    def get_lyrics(self, artist_name, cover=True, other=True):
+        artist = self.search_artist(artist_name, cover=cover, other=other)
+        lyrics = []
+        for song in artist.songs():
+            lyrics.append({
+                'artist': song.artist_name,
+                'album': song.album_name,
+                'song': song.song_name,
+                'lyrics': song.get_lyrics()
+            })
+        return lyrics
+
+    def get_albums(self, artist_name, cover=True, other=True, encode=None):
+        artist = self.search_artist(artist_name, cover=cover, other=other)
+        return artist.get_albums()
+
+    def get_discography(self, artist_name, cover=True, other=True, encode=None):
+        artist = self.search_artist(artist_name, cover=cover, other=other)
+        return artist.to_json(encode=encode)

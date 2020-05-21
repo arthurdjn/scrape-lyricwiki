@@ -2,26 +2,11 @@
 Utilities functions.
 """
 
+import string
 import re
 import urllib
 import unidecode
 
-# Global variables to help to process strings / id.
-CHARS = [
-    ("`", ''),
-    ("’", "'"),
-    ('”', '"'),
-    ('“', '"'),
-    ('#', ''),
-    ("'D ", "'d "),
-    ("'Ll ", "'ll "),
-    ("'S ", "'s "),
-    ("'T ", "'t "),
-    ("'T ", "'t "),
-    ("Ww1", "WW1"),
-    ("Ww2", "WW2"),
-    ("Ww3", "WW3"),
-]
 
 LYRICS = [
     ('<i>', ''),
@@ -31,17 +16,19 @@ LYRICS = [
 ]
 
 
-def capitalize(string):
+def capitalize(string_raw):
     """Capitalize a string, even if it is between quotes like ", '.
 
     Args:
-        string (string): text to capitalize.
+        string_raw (string): text to capitalize.
 
     Returns:
         string
 
     """
-    return re.sub(r"\b[\w']", lambda m: m.group().capitalize(), string.lower())
+    # return re.sub(r"\b[\w']", lambda m: m.group().capitalize(), string.lower())
+
+    return string.capwords(string_raw.lower())
 
 
 def name_to_wiki(name):
@@ -54,14 +41,12 @@ def name_to_wiki(name):
 
     """
     name = name.strip()
-    name_wiki = ' '.join([name if name == name.upper() else capitalize(name) for name in name.split(' ')])
-    for char in CHARS:
-        name_wiki = name_wiki.replace(*char)
+    name_wiki = capitalize(name)
     return name_wiki
 
 
 def name_to_wiki_id(name):
-    """Generate a ``LyricWiki`` ID from a name.
+    """Generate a `Lyric Wiki` ID from a name.
 
     Args:
         name (string): name of an artist / song.
