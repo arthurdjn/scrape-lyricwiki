@@ -48,6 +48,8 @@ The package is divided as follows:
 * AlbumMeta, inherits from ArtistMeta
 * SongMeta, inherits from AlbumMeta
 
+<img src="img/lyricsfandom.png" height="400"/>
+
 ## Retrieve data
 
 
