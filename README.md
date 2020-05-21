@@ -22,7 +22,7 @@ pip install .
 
 ## LyricsFandom API
 
-You can search for `Artist``, ``Album`` or ``Song`` from the API:
+You can search for ``Artist``, ``Album`` or ``Song`` from the API:
 
 ```python
 from lyricsfandom import LyricWiki
