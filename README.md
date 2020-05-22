@@ -1,3 +1,8 @@
+[![](https://img.shields.io/readthedocs/lyricsfandom)](https://lyricsfandom.readthedocs.io/en/latest/index.html)
+[![](https://img.shields.io/pypi/v/lyricsfandom)](https://pypi.org/project/lyricsfandom/)
+![](https://img.shields.io/pypi/status/lyricsfandom)
+
+
 # lyricsfandom
 Scrape music data from LyricsWiki (https://lyrics.fandom.com). Artists, Albums, Songs can be extracted.
 
