@@ -1,6 +1,8 @@
 # lyricsfandom
 Scrape music data from LyricsWiki (https://lyrics.fandom.com). Artists, Albums, Songs can be extracted.
 
+*Project made during a Deep Learning project for music generation using GPT2 model.*
+
 
 # Installation
 
@@ -48,7 +50,9 @@ The package is divided as follows:
 * AlbumMeta, inherits from ArtistMeta
 * SongMeta, inherits from AlbumMeta
 
-<img src="img/lyricsfandom.png" height="400"/>
+<p align="center">
+<img src="img/lyricsfandom.png" height="600"/>
+</p>
 
 ## Retrieve data
 
@@ -82,6 +86,16 @@ You can scrape for description, links and other details information:
 artist = wiki.search_artist('london grammar')
 info = artist.get_info()  # description of the artist (band members, genres, labels etc.)
 links = artist.get_links()  # links where to buy the artist's music.
+```
+
+## Save and export
+
+You can save data in a JSON format (and encode it to ASCII if you want).
+
+```python
+artist = wiki.search_artist('london grammar')
+artist_data = artist.to_json(encode='ascii')
+# Idem for Album and Song
 ```
 
 # Efficiency
