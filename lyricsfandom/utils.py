@@ -3,9 +3,7 @@ Utilities functions.
 """
 
 import string
-import re
 import urllib
-import unidecode
 
 
 LYRICS = [
