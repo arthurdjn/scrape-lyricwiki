@@ -88,6 +88,16 @@ info = artist.get_info()  # description of the artist (band members, genres, lab
 links = artist.get_links()  # links where to buy the artist's music.
 ```
 
+## Save and export
+
+You can save data in a JSON format (and encode it to ASCII if you want).
+
+```python
+artist = wiki.search_artist('london grammar')
+artist_data = artist.to_json(encode='ascii')
+# Idem for Album and Song
+```
+
 # Efficiency
 
 This package can make a lot of connections while scraping data.
