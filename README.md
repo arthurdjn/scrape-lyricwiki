@@ -1,6 +1,8 @@
 # lyricsfandom
 Scrape music data from LyricsWiki (https://lyrics.fandom.com). Artists, Albums, Songs can be extracted.
 
+*Project made during a Deep Learning project for music generation using GPT2 model.*
+
 
 # Installation
 
