@@ -94,7 +94,18 @@ class LyricWiki(LyricWikiMeta):
     def search_query(self, query):
         raise NotImplementedError
 
-    def get_lyrics(self, artist_name, cover=True, other=True):
+    def get_lyrics(self, artist_name, cover=False, other=False):
+        """Get all lyrics from an artist.
+
+        Args:
+            artist_name (string): name of the artist to get.
+            cover (bool): if ``True`` scrape featuring or covers songs.
+            other (bool): if ``True`` scrape remixes or compilation albums.
+
+        Returns:
+            dict: lyrics in a JSON format.
+
+        """
         artist = self.search_artist(artist_name, cover=cover, other=other)
         lyrics = []
         for song in artist.songs():
@@ -106,10 +117,37 @@ class LyricWiki(LyricWikiMeta):
             })
         return lyrics
 
-    def get_albums(self, artist_name, cover=True, other=True, encode=None):
+    def get_albums(self, artist_name, cover=True, other=True):
+        """Get all albums from an artist.
+
+        Args:
+            artist_name (string): name of the artist to get.
+            cover (bool): if ``True`` scrape featuring or covers songs.
+            other (bool): if ``True`` scrape remixes or compilation albums.
+
+        Returns:
+            list(Album)
+
+        """
         artist = self.search_artist(artist_name, cover=cover, other=other)
         return artist.get_albums()
 
     def get_discography(self, artist_name, cover=True, other=True, encode=None):
+        """Get the discography of an artist, in a JSON format.
+
+        .. note::
+
+            The returned dictionary is in a nested format.
+
+        Args:
+            artist_name (string): name of the artist to get.
+            cover (bool): if ``True`` scrape featuring or covers songs.
+            other (bool): if ``True`` scrape remixes or compilation albums.
+            encode (string): encode the string text (ex: ``encode='ascii``). Default is None.
+
+        Returns:
+            dict
+
+        """
         artist = self.search_artist(artist_name, cover=cover, other=other)
         return artist.to_json(encode=encode)
