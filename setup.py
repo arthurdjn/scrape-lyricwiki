@@ -15,7 +15,7 @@ def readme_data():
 find_packages()
 
 setup(name='lyricsfandom',
-      version='0.1.1',
+      version='0.2',
       description='Scrape songs on LyricWiki.',
       long_description=readme_data(),
       long_description_content_type="text/markdown",
