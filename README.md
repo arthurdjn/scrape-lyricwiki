@@ -42,10 +42,29 @@ artist = wiki.search_artist('london grammar')
 # Search for an album
 album = wiki.search_album('london grammar', 'if you wait')
 # ...Or a song
-song = wiki.search_song('london grammar', 'strong')
+song = wiki.search_song('london grammar', 'wicked game')
 # And retrieve its lyrics
 lyrics = song.get_lyrics()
+print(lyrics)
 ```
+
+```
+The world was on fire and no-one can save me but you
+Strange what desire can make foolish people do
+I'd never dreamed that I'd meet somebody like you
+I'd never dreamed that I'd lose somebody like you
+
+No, I don't wanna fall in love
+No, I don't wanna fall in love
+With you
+
+What a wicked thing to do
+To make me dream of you
+What a wicked thing to say
+To make me feel this way
+[...]
+```
+
 
 ## Structure
 
