@@ -2,6 +2,8 @@
 [![](https://img.shields.io/pypi/v/lyricsfandom)](https://pypi.org/project/lyricsfandom/)
 ![](https://img.shields.io/pypi/status/lyricsfandom)
 
+> **Note**  
+> The LyricWiki website is closed (see [issue #1](https://github.com/arthurdjn/scrape-lyricwiki/issues/1) and [wiki notice](https://en.wikipedia.org/wiki/LyricWiki)). The package is no longer working as of 2023.
 
 # lyricsfandom
 Scrape music data from LyricsWiki (https://lyrics.fandom.com). Artists, Albums, Songs can be extracted.
